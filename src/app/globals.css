@@ -2,26 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.thunderstorm {
+  position: relative;
+  background-image: url("../assets/thunderstorm.gif");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100%;
+  width: fit-content;
+  border-radius: 1rem;
+  z-index: 1;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.thunderstorm::before {
+  content: "";
+  position: absolute;
+  border-radius: 1rem;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 2;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.clouds {
+  position: relative;
+  background-image: url("../assets/clouds.gif");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: max-content;
+  width: fit-content;
+  border-radius: 1rem;
+  z-index: 1;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.clouds::before {
+  content: "";
+  position: absolute;
+  border-radius: 1rem;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 2;
 }
