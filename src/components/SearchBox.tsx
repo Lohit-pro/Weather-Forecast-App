@@ -1,24 +1,20 @@
-import cn from "@/utils/cn";
 import React from "react";
-import { BiTargetLock } from "react-icons/bi";
 import { IoIosSearch } from "react-icons/io";
 
-type Props = {
-  className?: string;
+type SearchBoxProps = {
   value: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
-  onSubmit: React.FormEventHandler<HTMLFormElement> | undefined;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  onSubmit: React.FormEventHandler<HTMLFormElement>;
 };
 
-export default function SearchBox(props: Props) {
+export default function SearchBox(props: SearchBoxProps) {
   return (
     <form
       onSubmit={props.onSubmit}
-      className={cn("flex relative items-center justify-center h-10", props.className)}
+      className="flex relative items-center justify-center h-10"
     >
       <input
         type="text"
-        name="searchbar"
         placeholder="Search city"
         value={props.value}
         onChange={props.onChange}

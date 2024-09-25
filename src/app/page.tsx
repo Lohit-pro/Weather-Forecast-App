@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import Loading from "@/components/Loading";
-import React from "react";
+import React, { useState } from "react";
 import { format, parseISO } from "date-fns";
 import TodayCard from "@/components/TodayCard";
 import kelvinToCelsius from "@/utils/kelvinToCelsius";
@@ -67,16 +67,38 @@ interface WeatherData {
   };
 }
 
+const weatherClassMap: { [key: string]: string } = {
+  Clear: "clear",
+  Clouds: "clouds",
+  Rain: "rain text-white",
+  Drizzle: "drizzle text-white",
+  Thunderstorm: "thunderstorm text-white",
+  Snow: "snow text-dark",
+  Mist: "mist",
+  Smoke: "smoke",
+  Haze: "haze",
+  Dust: "dust",
+  Fog: "fog",
+  Sand: "sand",
+  Ash: "ash",
+  Squall: "squall",
+  Tornado: "tornado text-white",
+};
+
 export default function Home() {
+  const [selectedCity, setSelectedCity] = useState("Mumbai");
+
+  const updateCity = (newCity: string) => {
+    setSelectedCity(newCity);
+  };
+
   const { isLoading, error, data } = useQuery<WeatherData>(
-    "repoData",
+    ["weatherData", selectedCity],
     async () => {
       try {
         const { data } = await axios.get(
-          `https://api.openweathermap.org/data/2.5/forecast?q=hubli&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}`
+          `https://api.openweathermap.org/data/2.5/forecast?q=${selectedCity}&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}`
         );
-
-        console.log(data);
         return data;
       } catch (err) {
         console.error(err);
@@ -90,10 +112,9 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-4 min-h-screen bg-gray-200">
       {!isLoading ? (
-        <React.Fragment>
-          <Navbar city={data?.city.name} />
+        <>
+          <Navbar cityName={data?.city.name} onCityChange={updateCity} />
           <main className="border-2 border-red-400 px-3 max-w-7xl mx-auto flex flex-col gap-2 w-full pb-10 pt-4">
-            {/* Todays data */}
             <section>
               <h2 className="text-2xl gap-2 pl-3">
                 {format(parseISO(firstData?.dt_txt ?? ""), "EEEE")}
@@ -102,7 +123,11 @@ export default function Home() {
 
             <section className="h-full">
               <TodayCard
-              className={firstData?.weather[0].main === "Clouds" ? "clouds" : "thunderstorm"}
+                className={
+                  firstData?.weather[0].main
+                    ? weatherClassMap[firstData.weather[0].main] 
+                    : "clouds"
+                }
                 currentTemp={kelvinToCelsius(firstData?.main.temp ?? 0)}
                 feelsLikeTemp={firstData?.main.feels_like}
                 tempMax={kelvinToCelsius(firstData?.main.temp_max ?? 0)}
@@ -110,16 +135,12 @@ export default function Home() {
               />
             </section>
           </main>
-        </React.Fragment>
+        </>
       ) : (
         <div className="flex items-center justify-center">
-          <Loading color={"#000000"} size={30} />
-          <Loading color={"#000000"} size={30} />
           <Loading color={"#000000"} size={30} />
         </div>
       )}
     </div>
   );
 }
-
-// https://api.openweathermap.org/data/2.5/forecast?q=hubli&appid=137d9b7d152476e133198ee2fea73657
